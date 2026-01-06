@@ -25,5 +25,15 @@ pipeline
             }
         
         }
+	stage('Deployment')
+        {
+            steps
+            {
+                script
+                {
+                    cicd.deployTomcat("DPwithSharedLibraries","172.31.15.135","testapp")
+                }
+            }
+        }
     }
 }
