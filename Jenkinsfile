@@ -1,3 +1,4 @@
+@Library('mylibrary')_
 pipeline
 {
     agent any
@@ -7,36 +8,51 @@ pipeline
         {
             steps
             {
-                 git 'https://github.com/IntelliqDevops/maven.git'
+                script
+                {
+                    cicd.gitDownload("maven")
+                }
             }
         }
         stage('Build')
         {
             steps
             {
-                sh 'mvn package'
+                script
+                {
+                    cicd.buildArtifact()
+                }
             }
         }
         stage('Deployment')
         {
             steps
             {
-                 deploy adapters: [tomcat9(alternativeDeploymentContext: '', credentialsId: 'ca134ab9-e8c3-4d89-b536-101e536443e6', path: '', url: 'http://172.31.15.135:8080')], contextPath: 'testapp', war: '**/*.war'
+                script
+                {
+                    cicd.deployTomcat("DPwithSharedLibraries","172.31.15.135","testapp")
+                }
             }
         }
         stage('Testing')
         {
             steps
             {
-                git 'https://github.com/IntelliqDevops/FunctionalTesting.git'
-                sh 'java -jar /var/lib/jenkins/workspace/ScriptedPipeline1/testing.jar'
+                script
+                {
+                    cicd.gitDownload("FunctionalTesting")
+                    cicd.executeSelenium("DPwithSharedLibraries")
+                }
             }
         }
-        stage('Downloading')
+        stage('Delivery')
         {
             steps
             {
-                 deploy adapters: [tomcat9(alternativeDeploymentContext: '', credentialsId: 'ca134ab9-e8c3-4d89-b536-101e536443e6', path: '', url: 'http://172.31.11.245:8080')], contextPath: 'prodapp', war: '**/*.war'
+                script
+                {
+                    cicd.deployTomcat("DPwithSharedLibraries","172.31.11.245","prodapp")
+                }
             }
         }
     }
