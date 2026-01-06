@@ -23,37 +23,7 @@ pipeline
                     cicd.buildArtifact()
                 }
             }
-        }
-        stage('Deployment')
-        {
-            steps
-            {
-                script
-                {
-                    cicd.deployTomcat("DPwithSharedLibraries","172.31.15.135","testapp")
-                }
-            }
-        }
-        stage('Testing')
-        {
-            steps
-            {
-                script
-                {
-                    cicd.gitDownload("FunctionalTesting")
-                    cicd.executeSelenium("DPwithSharedLibraries")
-                }
-            }
-        }
-        stage('Delivery')
-        {
-            steps
-            {
-                script
-                {
-                    cicd.deployTomcat("DPwithSharedLibraries","172.31.11.245","prodapp")
-                }
-            }
+        
         }
     }
 }
